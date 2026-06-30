@@ -38,6 +38,7 @@ import db
 import info
 import utility
 import moderation
+import ai_chat
 
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8213477677:AAEcG2gnC_VXED0aFyg7ngHaDSFb5b_QfOI")
 
@@ -148,6 +149,9 @@ def main():
     # passive tracking and link checking
     app.add_handler(MessageHandler(filters.ChatType.GROUPS & ~filters.COMMAND, moderation.check_links), group=0)
     app.add_handler(MessageHandler(filters.ChatType.GROUPS & ~filters.COMMAND, track_member), group=1)
+
+    # AI direct messages
+    app.add_handler(MessageHandler(filters.ChatType.PRIVATE & ~filters.COMMAND, ai_chat.handle_dm))
 
     logger.info("Bot starting...")
     app.run_polling()
