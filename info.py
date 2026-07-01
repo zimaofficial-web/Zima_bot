@@ -6,6 +6,7 @@ as people talk (see track_member in bot.py).
 """
 
 import time
+import html
 from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import ContextTypes
@@ -60,7 +61,9 @@ async def active(update: Update, context: ContextTypes.DEFAULT_TYPE):
 @require_subscription
 async def tagall(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat = update.effective_chat
+    print(f"[*] /tagall triggered in chat {chat.id} by {update.effective_user.id}")
     if not await require_group(update) or not await require_admin(update):
+        print("[-] /tagall failed: Not a group or not an admin")
         return
 
     members = db.get_members(chat.id)
@@ -84,13 +87,18 @@ async def tagall(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if m["username"]:
             mentions.append(f"@{m['username']}")
         else:
-            mentions.append(f'<a href="tg://user?id={m["user_id"]}">{m["first_name"]}</a>')
+            safe_name = html.escape(m["first_name"] or "User")
+            mentions.append(f'<a href="tg://user?id={m["user_id"]}">{safe_name}</a>')
 
     import asyncio
-    for i in range(0, len(mentions), MENTIONS_PER_MESSAGE):
-        batch = mentions[i : i + MENTIONS_PER_MESSAGE]
-        text = " ".join(batch)
-        if note and i == 0:
-            text = f"{note}\n{text}"
-        await context.bot.send_message(chat.id, text, parse_mode=ParseMode.HTML)
-        await asyncio.sleep(1.0)
+    try:
+        for i in range(0, len(mentions), MENTIONS_PER_MESSAGE):
+            batch = mentions[i : i + MENTIONS_PER_MESSAGE]
+            text = " ".join(batch)
+            if note and i == 0:
+                text = f"{note}\n{text}"
+            await context.bot.send_message(chat.id, text, parse_mode=ParseMode.HTML)
+            await asyncio.sleep(1.0)
+        print(f"[+] /tagall successfully sent {len(mentions)} tags in chat {chat.id}")
+    except Exception as e:
+        print(f"[-] /tagall crashed: {e}")

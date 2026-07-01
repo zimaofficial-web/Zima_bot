@@ -12,7 +12,9 @@ import sqlite3
 import time
 import os
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "bot.db")
+# On Railway, the local file system resets every time you deploy!
+# By using os.getenv("DB_PATH"), we can tell Railway to store the database on a permanent Volume (e.g. /data/bot.db)
+DB_PATH = os.getenv("DB_PATH", os.path.join(os.path.dirname(__file__), "bot.db"))
 
 
 def get_conn():

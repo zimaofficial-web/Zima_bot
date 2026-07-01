@@ -14,9 +14,8 @@ async def is_admin(update: Update) -> bool:
 
 
 async def require_admin(update: Update) -> bool:
-    """Replies with a refusal and returns False if the caller isn't an admin."""
+    """Returns False if the caller isn't an admin (silently ignores them)."""
     if not await is_admin(update):
-        await update.message.reply_text("This command is admin-only.")
         return False
     return True
 
@@ -112,6 +111,7 @@ def require_subscription(func):
             return await func(update, context, *args, **kwargs)
 
         if not is_subscribed(chat.id):
+            print(f"[-] Command blocked: Chat {chat.id} is not subscribed. Sending invoice...")
             await send_subscription_invoice(update, context)
             return
             

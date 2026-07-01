@@ -40,7 +40,7 @@ import utility
 import moderation
 import ai_chat
 
-BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "8213477677:AAEcG2gnC_VXED0aFyg7ngHaDSFb5b_QfOI")
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "PUT_YOUR_BOT_TOKEN_HERE")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -112,6 +112,11 @@ async def auth_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"Error: {e}")
 
 
+async def get_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat = update.effective_chat
+    await update.message.reply_text(f"The ID of this chat is: {chat.id}")
+
+
 def main():
     if BOT_TOKEN == "PUT_YOUR_BOT_TOKEN_HERE":
         raise SystemExit("Set your bot token: edit BOT_TOKEN in bot.py or export TELEGRAM_BOT_TOKEN=xxxx")
@@ -124,6 +129,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", start))
     app.add_handler(CommandHandler("authgroup", auth_group))
+    app.add_handler(CommandHandler("id", get_id))
 
     # payments
     app.add_handler(PreCheckoutQueryHandler(precheckout_callback))

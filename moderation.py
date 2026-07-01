@@ -39,7 +39,6 @@ async def check_links(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 logger.error(f"Failed to delete link message: {e}")
 
 
-@require_subscription
 async def mute(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Mutes a member for a specified number of minutes (default 60)."""
     if not await require_group(update) or not await require_admin(update):
@@ -86,7 +85,6 @@ async def mute(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"Failed to mute user: {e}")
 
 
-@require_subscription
 async def unmute(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Lifts mute restrictions on a user."""
     if not await require_group(update) or not await require_admin(update):
@@ -123,7 +121,6 @@ async def unmute(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"Failed to unmute user: {e}")
 
 
-@require_subscription
 async def kick(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Kicks a member from the group (allows rejoining via invite link)."""
     if not await require_group(update) or not await require_admin(update):
@@ -147,6 +144,6 @@ async def kick(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.ban_chat_member(chat_id=chat.id, user_id=target_id)
         # Immediately unban so they can rejoin via invite link
         await context.bot.unban_chat_member(chat_id=chat.id, user_id=target_id)
-        await update.message.reply_text(f"👢 Kicked {target_name} from the group.")
+        await update.message.reply_text(f" Kicked {target_name} from the group.")
     except Exception as e:
         await update.message.reply_text(f"Failed to kick user: {e}")
