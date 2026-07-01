@@ -24,6 +24,16 @@ def get_conn():
 
 
 def init_db():
+    import shutil
+    local_db = os.path.join(os.path.dirname(__file__), "bot.db")
+    if DB_PATH != local_db and not os.path.exists(DB_PATH) and os.path.exists(local_db):
+        try:
+            os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+            shutil.copy2(local_db, DB_PATH)
+            print(f"Seeded volume database from {local_db}")
+        except Exception as e:
+            print(f"Failed to seed db: {e}")
+
     conn = get_conn()
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS members (
