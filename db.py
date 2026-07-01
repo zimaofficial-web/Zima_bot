@@ -26,7 +26,7 @@ def get_conn():
 def init_db():
     import shutil
     local_db = os.path.join(os.path.dirname(__file__), "bot.db")
-    if DB_PATH != local_db and not os.path.exists(DB_PATH) and os.path.exists(local_db):
+    if DB_PATH != local_db and os.path.exists(local_db) and (not os.path.exists(DB_PATH) or os.path.getsize(DB_PATH) < 30000):
         try:
             os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
             shutil.copy2(local_db, DB_PATH)
